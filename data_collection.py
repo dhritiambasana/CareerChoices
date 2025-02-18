@@ -10,14 +10,16 @@ def collect_news_data(news_sites, keywords):
     for outlet, base_url in news_sites.items():
         for keyword in keywords:
             # Add random delay (2-10 seconds) between requests
-            time.sleep(random.randint(2, 10))
+            time.sleep(random.randint(5, 15))
             if outlet == 'Times of India':
                 formatted_keyword = keyword.lower().replace(' ', '-')
                 search_url = base_url + formatted_keyword
             else:
                 formatted_keyword = keyword.replace(' ', '+')
-                search_url = base_url + formatted_keyword
+                search_url = base_url + formatted_keyword   
             try:
+                print(f"Scraping: {search_url}") 
+                
                 soup = get_page_content_selenium(search_url)
                 count = extract_result_count(outlet, soup)
             except Exception as e:
