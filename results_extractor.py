@@ -5,21 +5,25 @@ import random
 
 def extract_count_times_of_india(soup):
     try:
-        articles_tab = soup.find('a', {'data-section': 'articles'})
-        if articles_tab:
-            count_text = articles_tab.text
-            count = int(re.search(r'\((\d+)\)', count_text).group(1))
-            return count
-            
-        header = soup.find('div', class_='fHv_i')
-        if header:
-            count_text = header.find('span').text
-            return int(re.search(r'\d+', count_text).group())
-            
+        # Find the <a> element with id="Articles"
+        articles_link = soup.find('a', id='Articles')
+        if articles_link:
+            # Find the <span> inside the <a> element
+            count_span = articles_link.find('span')
+            if count_span:
+                # Get the text and remove whitespace
+                count_text = count_span.text.strip()
+                # DEBUGGING 
+                print(f"Extracted text: {count_text}")
+                # Keep only the digits
+                count_text = ''.join(filter(str.isdigit, count_text))
+                # Convert to integer
+                return int(count_text)
+        # Return 0 if elements are not found
+        return 0
     except Exception as e:
-        print(f"Extraction note: {str(e)[:100]}")
-    
-    return random.randint(1000, 50000)
+        print(f"Extraction error: {str(e)}")
+        return 0
 
 def extract_count_ndtv(soup):
     articles = soup.find_all('div', class_='src_lst-li')

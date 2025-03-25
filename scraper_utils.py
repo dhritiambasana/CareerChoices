@@ -12,23 +12,26 @@ from selenium.webdriver.support import expected_conditions as EC
 
 def get_page_content_selenium(url, outlet=None):
     options = FirefoxOptions()
-    options.add_argument('--headless')
+    # options.add_argument('--headless')
     driver = webdriver.Firefox(options=options)
     
     try:
+        # Navigate to the URL
         driver.get(url)
-        last_height = driver.execute_script("return document.body.scrollHeight")
-        scroll_attempts = 0
-        
         if outlet == 'Times of India':
-            try:
-                WebDriverWait(driver, 15).until(
-                    EC.presence_of_element_located(
-                        (By.CSS_SELECTOR, "a[data-section='articles'], div.HdLk")
-                    )
-                )
-            except:
-                print("Timeout waiting for count elements")
+            # Wait for the <a id="Articles"> element to be present (up to 15 seconds)
+            WebDriverWait(driver, 20).until(
+                EC.presence_of_element_located((By.ID, "Articles"))
+            )
+        # Get the page source after the element is loaded
+        html = driver.page_source
+        
+        with open('page_source.html', 'w', encoding='utf-8') as f:
+            f.write(html)
+        
+    except Exception as e:
+        print(f"Selenium error: {str(e)}")
+        html = "empty"  # Return empty HTML on failure
             
         if outlet == 'NDTV':
             WebDriverWait(driver, 15).until(
